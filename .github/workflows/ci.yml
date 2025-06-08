@@ -69,9 +69,3 @@ jobs:
         name: build-artifacts
         path: ./artifacts/
         retention-days: 30
-    
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
-      if: success()
-      with:
-        fail_ci_if_error: false
