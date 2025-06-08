@@ -1,0 +1,65 @@
+# Visual Studio temporary files and folders
+.vs/
+*.suo
+*.user
+*.log
+*.docstates
+*.vstemplate
+*.cache
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Tt]emp/
+*.exe
+*.dll
+*.pdb
+*.apk
+*.aab
+*.appx
+*.xap
+*.zip
+*.nupkg
+*.snk
+
+# NuGet packages
+packages/
+*.nuget.log
+*.cache
+
+# Rider
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# xUnit test results
+*.trx
+
+# Resharper/dotCover/etc.
+*.ReSharper/
+*.resharper
+_ReSharper.*/
+[Tt]est[Rr]esults/
+
+# Source control files
+.git/
+.svn/
+.hg/
+
+# Miscellaneous
+*.tmp
+*.bak
+*.scc
+*.vspscc
+*.vssscc
+*.bak
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Node.js
+node_modules/

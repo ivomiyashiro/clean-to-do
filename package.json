@@ -1,0 +1,40 @@
+{
+    "name": "@to-do/clean-architecture",
+    "version": "0.0.1",
+    "private": true,
+    "workspaces": [
+        "To-Do.Presentation/ClientApp"
+    ],
+    "scripts": {
+        "build:backend": "dotnet build --configuration Release",
+        "build:frontend": "cd To-Do.Presentation/ClientApp && pnpm build",
+        "build": "pnpm run build:frontend && pnpm run build:backend",
+        "dev:backend": "cd To-Do.Presentation && dotnet run",
+        "dev:frontend": "cd To-Do.Presentation/ClientApp && pnpm dev",
+        "dev": "pnpm run dev:frontend && pnpm run dev:backend",
+        "format:backend": "dotnet format",
+        "format:frontend": "cd To-Do.Presentation/ClientApp && pnpm format",
+        "format": "pnpm run format:frontend && pnpm run format:backend",
+        "lint:backend": "dotnet format --verify-no-changes --verbosity diagnostic",
+        "lint:frontend": "cd To-Do.Presentation/ClientApp && pnpm lint",
+        "lint": "pnpm run lint:frontend && pnpm run lint:backend",
+        "prepare": "husky",
+        "start:backend": "cd To-Do.Presentation && dotnet run",
+        "start:frontend": "cd To-Do.Presentation/ClientApp && pnpm start",
+        "start": "pnpm run start:frontend && pnpm run start:backend",
+        "test": "dotnet test"
+    },
+    "devDependencies": {
+        "husky": "9.0.11",
+        "lint-staged": "15.2.2"
+    },
+    "lint-staged": {
+        "To-Do.Presentation/ClientApp/**/*.{ts,tsx}": [
+            "cd To-Do.Presentation/ClientApp && prettier --write",
+            "cd To-Do.Presentation/ClientApp && eslint --fix"
+        ],
+        "**/*.cs": [
+            "dotnet format --include"
+        ]
+    }
+}

@@ -1,0 +1,100 @@
+trigger:
+- main
+- develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildConfiguration: 'Release'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+stages:
+- stage: CI
+  displayName: 'Continuous Integration'
+  jobs:
+  - job: Build
+    displayName: 'Build, Test, and Lint'
+    steps:
+    
+    # Setup .NET
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '8.x'
+    
+    # Setup Node.js for frontend
+    - task: NodeTool@0
+      displayName: 'Use Node.js'
+      inputs:
+        versionSpec: '20.x'
+    
+    # Install pnpm
+    - script: npm install -g pnpm
+      displayName: 'Install pnpm'
+    
+    # Cache pnpm store
+    - task: Cache@2
+      displayName: 'Cache pnpm store'
+      inputs:
+        key: 'pnpm | "$(Agent.OS)" | pnpm-lock.yaml'
+        restoreKeys: |
+          pnpm | "$(Agent.OS)"
+        path: ~/.local/share/pnpm/store
+    
+    # Install dependencies
+    - script: pnpm install --frozen-lockfile
+      displayName: 'Install dependencies'
+    
+    # Linting (your scripts handle both frontend and backend)
+    - script: pnpm run lint
+      displayName: 'Lint code (frontend + backend)'
+    
+    # Build (your script handles both frontend and backend)
+    - script: pnpm run build
+      displayName: 'Build application (frontend + backend)'
+    
+    # Run tests
+    - script: pnpm run test
+      displayName: 'Run tests'
+      continueOnError: false
+    
+    # Publish test results (if using trx format)
+    - task: PublishTestResults@2
+      displayName: 'Publish test results'
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
+        failTaskOnFailedTests: true
+      condition: always()
+    
+    # Publish backend artifacts
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish backend'
+      inputs:
+        command: 'publish'
+        publishWebProjects: true
+        projects: 'To-Do.Presentation/*.csproj'
+        arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/backend --no-build'
+        zipAfterPublish: true
+    
+    # Copy frontend build artifacts
+    - task: CopyFiles@2
+      displayName: 'Copy frontend artifacts'
+      inputs:
+        SourceFolder: 'To-Do.Presentation/ClientApp/dist'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/frontend'
+      condition: succeeded()
+    
+    # Store all artifacts
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish build artifacts'
+      inputs:
+        pathToPublish: '$(Build.ArtifactStagingDirectory)'
+        artifactName: 'drop'
+        publishLocation: 'Container'
+
