@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\To-Do.Application\To-Do.Application.csproj" />
     <ProjectReference Include="..\To-Do.Infrastructure\To-Do.Infrastructure.csproj" />
+    <ProjectReference Include="..\To-Do.SharedKernel\To-Do.SharedKernel.csproj" />
   </ItemGroup>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
