@@ -1,5 +1,6 @@
 using To_Do.Infrastructure;
 using To_Do.Application;
+using To_Do.Presentation.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +29,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
 app.UseCors("AllowReactApp");
 app.UseStaticFiles();
+app.MapApiEndpoints();
+
 app.MapFallbackToFile("index.html");
 
 app.Run();

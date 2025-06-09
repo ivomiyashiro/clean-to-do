@@ -20,11 +20,14 @@
     <ProjectReference Include="..\To-Do.SharedKernel\To-Do.SharedKernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Api\Endpoints\" />
+  </ItemGroup>
+
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)dist\**" />
-      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')"
-                            Exclude="@(ResolvedFileToPublish)">
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>
