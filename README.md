@@ -1,147 +1,67 @@
-# Clean Architecture To-Do Application
+# Clean Architecture To-Do App
 
-## Overview
-A modern To-Do application built using Clean Architecture principles, following SOLID principles and Domain-Driven Design (DDD) practices.
-
-## Architecture Layers
-
-### Domain
-The Core (or Domain) layer is the innermost layer and contains your application's business rules. It should have no dependencies on other layers. 
-
-```bash
-dotnet new classlib -n To-Do.Domain
-dotnet sln add To-Do.Domain
-```
-
-#### Key Components
-- **Entities**: Core business objects with unique identity
-- **Value Objects**: Immutable objects defined by their attributes
-- **Domain Events**: Events that occur within the domain
-- **Interfaces**: Contracts for external services
-- **Enums**: Domain-specific enumerations
-- **Exceptions**: Domain-specific exceptions
-
-### Application
-The Application layer contains application-specific business rules, use cases, and orchestrates the flow of data. It defines the application's boundaries and serves as an entry point for interacting with the domain.
-
-```bash
-dotnet new classlib -n To-Do.Application
-dotnet sln add To-Do.Application
-dotnet add To-Do.Application reference To-Do.Domain
-```
-
-#### Key Components
-- **Application Services**: Orchestrate use cases
-- **Use Cases**: 
-  - Command Handlers (CQRS pattern)
-  - Query Handlers (CQRS pattern)
-  - Validators (FluentValidation)
-- **DTOs**: Data Transfer Objects for API contracts
-- **Interfaces**: For external services
-- **Mappings**: AutoMapper profiles
-- **Behaviors**: MediatR pipeline behaviors
-
-### Infrastructure
-The Infrastructure layer provides the implementation details for interfaces defined in the Core and Application layers.
-
-```bash
-dotnet new classlib -n To-Do.Infrastructure
-dotnet sln add To-Do.Infrastructure
-dotnet add To-Do.Infrastructure reference To-Do.Domain
-dotnet add To-Do.Infrastructure reference To-Do.Application
-```
-
-#### Key Components
-- **Persistence**: 
-  - Entity Framework Core configurations
-  - Repositories implementation
-  - Database migrations
-- **External Services**: 
-  - Email service
-  - File storage
-  - Third-party API clients
-- **Logging**: Serilog implementation
-- **Authentication**: JWT implementation
-- **Caching**: Redis implementation
-- **Background Jobs**: Hangfire implementation
-
-### Presentation
-The Presentation layer contains both the API and the React frontend application.
-
-```bash
-dotnet new webapi -n To-Do.Presentation
-dotnet sln add To-Do.Presentation
-dotnet add To-Do.Presentation reference To-Do.Application
-dotnet add To-Do.Presentation reference To-Do.Infrastructure
-```
-
-#### Key Components
-- **API**:
-  - Controllers: RESTful endpoints
-  - Middleware: Exception handling, request logging, API versioning
-  - Filters: Action filters
-  - Configuration: App settings
-  - Dependency Injection: Service registration
-- **Frontend**:
-  - React with TypeScript
-  - Vite for build tooling
-  - Modern UI components
-  - State management
-  - API integration
-
-## Getting Started
+## Quick Start
 
 ### Prerequisites
+
 - .NET 8.0 SDK
-- SQL Server (or your preferred database)
-- Visual Studio 2022 / VS Code
+- Node.js 18+
+- pnpm (`npm install -g pnpm`)
+- SQL Server (or LocalDB)
 
-### Setup
-1. Clone the repository
-2. Update connection strings in `appsettings.json`
-3. Run database migrations
-4. Start the application
+### Run the App
 
-### Development
 ```bash
-# Run the application
-dotnet run --project To-Do.Presentation
+# Install dependencies
+pnpm install
 
-# Run tests
-dotnet test
+# Setup database (update connection string in appsettings.json if needed)
+dotnet ef database update --project To-Do.Infrastructure --startup-project To-Do.Presentation
 
-# Build the solution
-dotnet build
+# Option 1: Run both frontend and backend together
+pnpm dev
+
+# Option 2: Run separately (recommended for development)
+# Terminal 1 - Backend API
+pnpm dev:backend
+
+# Terminal 2 - Frontend React app
+pnpm dev:frontend
 ```
 
-## Best Practices
-- Follow CQRS pattern for better separation of concerns
-- Use MediatR for implementing CQRS
-- Implement proper validation using FluentValidation
-- Use AutoMapper for object mapping
-- Implement proper logging with Serilog
-- Use proper exception handling
-- Implement proper API versioning
-- Use proper security measures (JWT, HTTPS)
-- Implement proper caching strategies
-- Use proper database indexing
+**Access:**
 
-## Testing
-- Unit Tests: xUnit
-- Integration Tests: WebApplicationFactory
-- E2E Tests: Playwright
+- Frontend: http://localhost:3000 (or check terminal output)
+- Backend API: https://localhost:7000 (or check terminal output)
 
-## CI/CD
-- GitHub Actions for CI/CD
-- Docker support
-- Azure DevOps pipelines
+### Development Commands
 
-## Contributing
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+```bash
+# Build everything
+pnpm build
 
-## License
-MIT License
+# Run tests
+pnpm test
+
+# Format code
+pnpm format
+
+# Lint code
+pnpm lint
+
+# Add database migration
+dotnet ef migrations add <MigrationName> --project To-Do.Infrastructure --startup-project To-Do.Presentation
+```
+
+### Project Structure
+
+```
+├── To-Do.Domain/              # Core business logic
+├── To-Do.Application/         # Use cases & application services
+├── To-Do.Infrastructure/      # Data access & external services
+├── To-Do.Presentation/        # .NET Web API
+│   └── ClientApp/            # React frontend
+└── package.json              # Workspace root
+```
+
+Built with Clean Architecture, .NET 8, and React + TypeScript.
