@@ -12,7 +12,7 @@ using To_Do.Infrastructure.Persistence;
 namespace To_Do.Infrastructure.Migrations
 {
     [DbContext(typeof(ToDoDbContext))]
-    [Migration("20250609121151_InitialCreate")]
+    [Migration("20250609200030_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
