@@ -1,8 +1,10 @@
 using To_Do.Infrastructure;
+using To_Do.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
