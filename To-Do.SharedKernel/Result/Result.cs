@@ -36,4 +36,12 @@ public readonly struct Result<T>
 
     public static implicit operator Result<T>(T value) => Result.Success(value);
     public static implicit operator Result<T>(Error error) => Result.Failure<T>(error);
+
+    public void Match(Action<T> onSuccess, Action<Error> onFailure)
+    {
+        if (IsSuccess)
+            onSuccess(Value);
+        else
+            onFailure(Error);
+    }
 }
