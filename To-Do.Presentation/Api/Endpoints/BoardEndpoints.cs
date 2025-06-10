@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using To_Do.Application.Features.Boards.Commands.CreateBoard;
 using To_Do.Application.Features.Boards.Commands.UpdateBoard;
+using To_Do.Application.Features.Boards.Queries.GetAllBoards;
 using To_Do.Presentation.Api.DTOs;
 using To_Do.Presentation.Api.Extensions;
 
@@ -13,6 +14,12 @@ public static class BoardEndpoints
     {
         var group = app.MapGroup("/api/boards")
             .WithTags("Boards");
+
+        group.MapGet("/", GetAllBoards)
+            .WithName("GetAllBoards")
+            .WithSummary("Get all boards")
+            .WithDescription("Retrieves all boards in the system.")
+            .Produces<GetAllBoardsResponse>(StatusCodes.Status200OK);
 
         group.MapPost("/", CreateBoard)
             .WithName("CreateBoard")
@@ -32,6 +39,19 @@ public static class BoardEndpoints
             .Produces<object>(StatusCodes.Status404NotFound)
             .Produces<object>(StatusCodes.Status409Conflict)
             .Produces<object>(StatusCodes.Status500InternalServerError);
+    }
+
+    private static async Task<IResult> GetAllBoards(
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken
+    )
+    {
+        var query = new GetAllBoardsQuery();
+        var result = await mediator.Send(query, cancellationToken);
+
+        return result.IsSuccess
+            ? Results.Ok(result.Value)
+            : result.Error.ToIResult();
     }
 
     private static async Task<IResult> CreateBoard(

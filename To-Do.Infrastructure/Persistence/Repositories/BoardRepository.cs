@@ -14,6 +14,11 @@ public class BoardRepository(ToDoDbContext context) : IBoardRepository
         return createdBoard.Entity;
     }
 
+    public async Task<List<Board>> GetAllBoardsAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Boards.ToListAsync(cancellationToken);
+    }
+
     public async Task<Board?> GetBoardByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Boards.FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
