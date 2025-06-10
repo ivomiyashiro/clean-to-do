@@ -2,11 +2,11 @@ using FluentValidation;
 
 namespace To_Do.Application.Features.Boards.Commands.CreateBoard;
 
-public sealed class CreateBoardValidator : AbstractValidator<CreateBoardDTO>
+public sealed class CreateBoardCommandValidator : AbstractValidator<CreateBoardCommand>
 {
-    public CreateBoardValidator()
+    public CreateBoardCommandValidator()
     {
-        RuleFor(x => x.Name)
+        RuleFor(x => x.Request.Name)
             .NotEmpty()
             .WithMessage("Board name is required")
             .MaximumLength(50)

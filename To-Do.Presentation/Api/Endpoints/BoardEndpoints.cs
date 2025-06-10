@@ -1,5 +1,5 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using To_Do.Application.Abstractions.Messaging;
 using To_Do.Application.Features.Boards.Commands.CreateBoard;
 using To_Do.Presentation.Api.Extensions;
 
@@ -23,12 +23,13 @@ public static class BoardEndpoints
     }
 
     private static async Task<IResult> CreateBoard(
-        [FromBody] CreateBoardDTO dto,
-        [FromServices] ICommandHandler<CreateBoardCommand, CreateBoardResponse> commandHandler,
-        CancellationToken cancellationToken)
+        [FromBody] CreateBoardRequest request,
+        [FromServices] IMediator _mediator,
+        CancellationToken cancellationToken
+    )
     {
-        var command = new CreateBoardCommand(dto);
-        var result = await commandHandler.Handle(command, cancellationToken);
+        var command = new CreateBoardCommand(request);
+        var result = await _mediator.Send(command, cancellationToken);
 
         return result.IsSuccess
             ? Results.Created($"/api/boards/{result.Value.Id}", result.Value)

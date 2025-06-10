@@ -1,27 +1,45 @@
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using To_Do.Application.Abstractions;
-using To_Do.Application.Abstractions.Behaviors;
 using To_Do.SharedKernel.Result;
 
 namespace To_Do.Application.Infrastructure.Behaviors;
 
-public sealed class ValidationBehavior<TRequest, TResponse>(IValidator<TRequest>? validator = null) : IValidationBehavior<TRequest, TResponse>
+public class ValidationBehavior<TRequest, TResponse>(IServiceProvider serviceProvider) : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : notnull
 {
-    private readonly IValidator<TRequest>? _validator = validator;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public async Task<Result<TResponse>> ValidateAsync(TRequest request, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (_validator is null)
+        var validator = _serviceProvider.GetService<IValidator<TRequest>>();
+
+        if (validator is null)
         {
-            return Result.Success(default(TResponse)!);
+            return await next();
         }
 
-        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (validationResult.IsFailure)
         {
-            return Result.Failure<TResponse>(validationResult.Error);
+            // Handle Result<T> responses
+            if (typeof(TResponse).IsGenericType && typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
+            {
+                var resultType = typeof(TResponse).GetGenericArguments()[0];
+                var failureMethod = typeof(Result<>).MakeGenericType(resultType).GetMethod("Failure", [typeof(Error)]);
+                if (failureMethod != null)
+                {
+                    return (TResponse)failureMethod.Invoke(null, [validationResult.Error])!;
+                }
+            }
+            // Handle Result responses
+            else if (typeof(TResponse) == typeof(Result))
+            {
+                return (TResponse)(object)Result.Failure(validationResult.Error);
+            }
         }
 
-        return Result.Success(default(TResponse)!);
+        return await next();
     }
 }
