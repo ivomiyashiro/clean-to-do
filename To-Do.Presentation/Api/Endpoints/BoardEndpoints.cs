@@ -40,7 +40,7 @@ public static class BoardEndpoints
         CancellationToken cancellationToken
     )
     {
-        var command = new CreateBoardCommand(request);
+        var command = new CreateBoardCommand(request.Name);
         var result = await _mediator.Send(command, cancellationToken);
 
         return result.IsSuccess

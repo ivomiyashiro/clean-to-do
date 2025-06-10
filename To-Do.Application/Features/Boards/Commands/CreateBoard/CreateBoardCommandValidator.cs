@@ -6,7 +6,7 @@ public sealed class CreateBoardCommandValidator : AbstractValidator<CreateBoardC
 {
     public CreateBoardCommandValidator()
     {
-        RuleFor(x => x.Request.Name)
+        RuleFor(x => x.Name)
             .NotEmpty()
             .WithMessage("Board name is required")
             .MaximumLength(50)

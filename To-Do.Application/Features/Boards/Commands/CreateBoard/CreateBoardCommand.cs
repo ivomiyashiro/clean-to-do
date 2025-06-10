@@ -7,7 +7,7 @@ using To_Do.SharedKernel.Result;
 
 namespace To_Do.Application.Features.Boards.Commands.CreateBoard;
 
-public sealed record CreateBoardCommand(CreateBoardRequest Request) : ICommand<CreateBoardResponse>;
+public sealed record CreateBoardCommand(string Name) : ICommand<CreateBoardResponse>;
 
 internal sealed class CreateBoardCommandHandler(IBoardRepository boardRepository, IUnitOfWork unitOfWork) : ICommandHandler<CreateBoardCommand, CreateBoardResponse>
 {
@@ -22,17 +22,17 @@ internal sealed class CreateBoardCommandHandler(IBoardRepository boardRepository
             await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
             // Check if board with name already exists
-            var existingBoard = await _boardRepository.GetBoardByNameAsync(request.Request.Name, cancellationToken);
+            var existingBoard = await _boardRepository.GetBoardByNameAsync(request.Name, cancellationToken);
 
             if (existingBoard is not null)
             {
                 return Result.Failure<CreateBoardResponse>(
-                    Error.Conflict("BoardAlreadyExists", $"A board with name {request.Request.Name} already exists")
+                    Error.Conflict("BoardAlreadyExists", $"A board with name {request.Name} already exists")
                 );
             }
 
             // Create a Board
-            var board = new Board(request.Request.Name);
+            var board = new Board(request.Name);
             var createdBoard = await _boardRepository.CreateBoardAsync(board, cancellationToken);
 
             // Commit transaction
