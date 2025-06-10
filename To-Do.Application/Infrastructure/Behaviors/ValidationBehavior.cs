@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using To_Do.Application.Abstractions;
+using To_Do.Application.Abstractions.Messaging;
 using To_Do.SharedKernel.Result;
 
 namespace To_Do.Application.Infrastructure.Behaviors;
@@ -12,10 +13,18 @@ public class ValidationBehavior<TRequest, TResponse>(IServiceProvider servicePro
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
+        // Only validate commands, not queries
+        if (request is not ICommand && request is not IBaseCommand)
+        {
+            return await next();
+        }
+
+        // Try to get validator from DI container
         var validator = _serviceProvider.GetService<IValidator<TRequest>>();
 
         if (validator is null)
         {
+            // No validator registered, skip validation
             return await next();
         }
 
