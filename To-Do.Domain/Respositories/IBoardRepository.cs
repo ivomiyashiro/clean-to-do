@@ -5,7 +5,8 @@ namespace To_Do.Domain.Respositories;
 public interface IBoardRepository
 {
     Task<Board> CreateBoardAsync(Board board, CancellationToken cancellationToken = default);
-    Task<Board?> GetBoardByNameAsync(string name, CancellationToken cancellationToken = default);
+    Task<List<Board>> GetAllBoardsAsync(CancellationToken cancellationToken = default);
     Task<Board?> GetBoardByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Board?> GetBoardByNameAsync(string name, CancellationToken cancellationToken = default);
     Board UpdateBoard(Board board);
 }
