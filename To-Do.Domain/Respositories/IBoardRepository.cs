@@ -6,4 +6,6 @@ public interface IBoardRepository
 {
     Task<Board> CreateBoardAsync(Board board, CancellationToken cancellationToken = default);
     Task<Board?> GetBoardByNameAsync(string name, CancellationToken cancellationToken = default);
+    Task<Board?> GetBoardByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Board UpdateBoard(Board board);
 }

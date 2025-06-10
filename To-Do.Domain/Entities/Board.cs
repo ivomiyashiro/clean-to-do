@@ -25,4 +25,20 @@ public class Board
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    public void Update(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new Exception("Name is required");
+        }
+
+        if (name.Length > 50)
+        {
+            throw new Exception("Name must be less than 50 characters");
+        }
+
+        Name = name;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
